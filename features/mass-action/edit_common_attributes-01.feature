@@ -190,3 +190,22 @@ Feature: Edit common attributes of many products at once
       | channel | locale | state   | missing_values                        | ratio |
       | mobile  | en_US  | warning | Color                                 | 80%   |
       | tablet  | en_US  | warning | Description, Rating, Side view, Color | 50%   |
+
+  @jira https://akeneo.atlassian.net/browse/PIM-6022
+  Scenario: Successfully mass edit product values preventing Shell Command Injection
+    Given I select rows boots, sandals and sneakers
+    When I press "Change product information" on the "Bulk Actions" dropdown button
+    And I choose the "Edit common attributes" operation
+    And I display the Name attribute
+    And I display the Description attribute
+    And I visit the "Product information" group
+    And I change the "Name" to "\$\(touch \/tmp\/inject.txt\) && \$\$ || `ls`; \"echo \"SHELL_INJECTION\"\""
+    And I change the "Description" to ";`echo \"SHELL_INJECTION\"`"
+    And I move on to the next step
+    And I wait for the "edit-common-attributes" mass-edit job to finish
+    Then the english name of "boots" should be "\$\(touch \/tmp\/inject.txt\) && \$\$ || `ls`; \"echo \"SHELL_INJECTION\"\""
+    And the english name of "sandals" should be "\$\(touch \/tmp\/inject.txt\) && \$\$ || `ls`; \"echo \"SHELL_INJECTION\"\""
+    And the english name of "sneakers" should be "\$\(touch \/tmp\/inject.txt\) && \$\$ || `ls`; \"echo \"SHELL_INJECTION\"\""
+    And the english tablet description of "boots" should be ";`echo \"SHELL_INJECTION\"`"
+    And the english tablet description of "sandals" should be ";`echo \"SHELL_INJECTION\"`"
+    And the english tablet description of "sneakers" should be ";`echo \"SHELL_INJECTION\"`"

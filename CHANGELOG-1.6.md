@@ -1,3 +1,9 @@
+# 1.6.x
+
+## Bug fixes
+
+- PIM-6022: Fix shell command injection in mass-edit (Waiting for a CVE ID)
+
 # 1.6.5 (2016-11-25)
 
 ## Bug fixes
